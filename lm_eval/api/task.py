@@ -72,6 +72,9 @@ class TaskConfig(dict):
     ] = None  # TODO: assert that this not None if num_fewshot > 0. (?) assert if this is same split as one evaling (?)
     # formatting / prompting options.
     # see docs/advanced_task_guide.md for more info
+    system_message: str = ""
+    user_prefix: str = ""
+    assistant_prefix: str = ""
     process_docs: Optional[Callable] = None
     doc_to_text: Optional[Union[Callable, str]] = None
     doc_to_target: Optional[Union[Callable, str]] = None
@@ -942,6 +945,7 @@ class ConfigurableTask(Task):
         """
         if description := self.config.description:
             description = utils.apply_template(self.config.description, doc)
+            description = self.config.system_message + self.config.user_prefix + description
 
         if num_fewshot == 0:
             # always prepend the (possibly empty) task description
@@ -949,20 +953,20 @@ class ConfigurableTask(Task):
         else:
             labeled_examples = description + self.sampler.get_context(doc, num_fewshot)
 
-        example = self.doc_to_text(doc)
+        example = self.doc_to_text(doc) 
         if self.multiple_input:
             return labeled_examples
         else:
             if isinstance(example, str):
-                return labeled_examples + example
+                return labeled_examples + example + self.config.assistant_prefix
             elif isinstance(example, list):
-                return [labeled_examples + ex for ex in example]
+                return [labeled_examples + ex + self.config.assistant_prefix for ex in example]
             elif isinstance(example, int):
                 if self.config.doc_to_choice is not None:
                     choices = self.doc_to_choice(doc)
-                    return labeled_examples + choices[example]
+                    return labeled_examples + choices[example] + self.config.assistant_prefix
                 else:
-                    return labeled_examples + str(example)
+                    return labeled_examples + str(example) + self.config.assistant_prefix
 
     def apply_filters(self):
         """Iterates over FilterEnsembles and applies them to instances"""
