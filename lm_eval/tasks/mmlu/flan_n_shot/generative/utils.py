@@ -95,7 +95,7 @@ class MultiChoiceRegexFilter(RegexFilter):
 
             filtered = []
             for resp in r:
-                match = find_match(self.regex, resp, {"A": "(A)", "B": "(B)", "C": "(C)", "D": "(D)", "E": "(E)", "F": "(F)", "A": "A)", "B": "B)", "C": "C)", "D": "D)", "E": "E)", "F": "F)", "A": "(A", "B": "(B", "C": "(C", "D": "(D", "E": "(E", "F": "(F"})
+                match = find_match(self.regex, resp, {"A": "(A)", "B": "(B)", "C": "(C)", "D": "(D)", "E": "(E)", "F": "(F)", "A)": "(A)", "B)": "(B)", "C)": "(C)", "D)": "(D)", "E)": "(E)", "F)": "(F)", "(A": "(A)", "(B": "(B)", "(C": "(C)", "(D": "(D)", "(E": "(E)", "(F": "(F)"})
                 if not match:
                     match = find_match(
                         fallback_regex, filter_ignores(resp), choice_to_alpha
