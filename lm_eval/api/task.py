@@ -943,9 +943,10 @@ class ConfigurableTask(Task):
         :returns: str
             The fewshot context.
         """
-        if description := self.config.description:
+        description = self.config.description if self.config.description else ""
+        if len(description)>0:
             description = utils.apply_template(self.config.description, doc)
-            description = self.config.system_message + self.config.user_prefix + description
+        description = self.config.system_message + self.config.user_prefix + description
 
         if num_fewshot == 0:
             # always prepend the (possibly empty) task description
